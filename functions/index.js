@@ -73,7 +73,7 @@ async function handleEvent(event) {
         }).then((result) => {
           console.log(result)
           const resultString = JSON.stringify(result)
-          client.replyMessage(event.replyToken, {
+          return client.replyMessage(event.replyToken, {
             type: 'text',
             text: resultString //実際に返信の言葉を入れる箇所
           });
