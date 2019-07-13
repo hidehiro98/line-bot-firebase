@@ -4,14 +4,16 @@ const functions = require('firebase-functions');
 const express = require('express');
 const request = require('request');
 const line = require('@line/bot-sdk');
+
+// https://www.npmjs.com/package/microsoft-computer-vision
 const microsofComputerVision = require("microsoft-computer-vision")
 
 const config = {
   channelSecret: functions.config().line.channel_secret,
   channelAccessToken: functions.config().line.access_token
 };
-
 const app = express();
+const client = new line.Client(config);
 
 app.post('/webhook', line.middleware(config), (req, res) => {
   console.log(req.body.events);
@@ -23,8 +25,6 @@ app.post('/webhook', line.middleware(config), (req, res) => {
       res.status(500).end();
     });
 });
-
-const client = new line.Client(config);
 
 async function handleEvent(event) {
   //   if (event.type !== 'message' || event.message.type !== 'text') {
@@ -38,7 +38,6 @@ async function handleEvent(event) {
       text: event.message.text //実際に返信の言葉を入れる箇所
     });
   }
-
 
   //////////////////
   // 画像認識パート //
@@ -65,10 +64,8 @@ async function handleEvent(event) {
         //     return;
         // })
 
-
-
         microsofComputerVision.analyzeImage({
-          "Ocp-Apim-Subscription-Key": "ccc8736f9c2c4c388ee5d7d700768a26",
+          "Ocp-Apim-Subscription-Key": functions.config().azure.computer_vision_key,
           "request-origin": "japaneast",
           "content-type": "application/octet-stream",
           "body": body,
